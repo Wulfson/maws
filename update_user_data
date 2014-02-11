@@ -1,0 +1,3 @@
+#!/bin/bash
+NEW_VAL=`base64 < user-data | tr -d '\n'`
+sed -r -i "s/(user_data\": \")[^\"]+/\1$NEW_VAL/g" minecraft_specs.json

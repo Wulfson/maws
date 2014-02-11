@@ -1,0 +1,9 @@
+{
+  "placement": {"availability_zone": "us-east-1c"},
+  "image_id": "ami-91c5abf8",
+  "key_name": "",
+  "security_group_ids": [""],
+  "iam_instance_profile": {"name": ""},
+  "instance_type": "",
+  "user_data": ""
+}

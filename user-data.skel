@@ -1,0 +1,27 @@
+#!/bin/bash -ex
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+DEBIAN_FRONTEND=noninteractive
+apt-get update && apt-get upgrade -y
+apt-get -q -y install python-pip python-dev build-essential
+pip install awscli
+mkdir -p /etc/aws
+echo "[default]
+aws_access_key_id = ASTRINGOFTHINGSANDSTUFF
+aws_secret_access_key = TheKeyThatGoesHere1
+region = us-east-1
+" > /etc/aws/aws.conf
+echo "export AWS_CONFIG_FILE=/etc/aws/aws.conf
+" > /root/.bash_aliases
+source /root/.bash_aliases
+aws ec2 attach-volume --volume-id vol-id12345 --device /dev/sdf --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id`
+aws ec2 associate-address --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id` --public-ip 127.0.0.1
+mv /home /old_home
+mkdir /home
+echo "/dev/xvdf /home auto nodev,nosuid 0 0" | sudo tee -a /etc/fstab
+echo "America/New_York" > /etc/timezone
+sleep 10
+while [ ! -e /dev/xvdf ]; do echo "Waiting for volume to attach..."; sleep 5; done
+mount /home
+useradd -d /home/minecraft -s /bin/bash -m minecraft
+/home/ubuntu/maint/startup
+
