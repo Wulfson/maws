@@ -5,5 +5,5 @@
   "security_group_ids": [""],
   "iam_instance_profile": {"name": ""},
   "instance_type": "",
-  "user_data": ""
+  "user_data": "placeholder"
 }

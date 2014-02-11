@@ -1,0 +1,6 @@
+#!/bin/bash
+output=`screen -ls | grep overviewer`
+if [ ${#output} = 0 ]
+then
+        screen -S overviewer -d -m overviewer.py --config=/mnt/overviewer/config.py
+fi

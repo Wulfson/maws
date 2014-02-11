@@ -1,0 +1,13 @@
+#!/bin/bash
+# Associate EIP if it's dangling
+output=`aws ec2 describe-addresses --public-ip=127.0.0.1 | grep InstanceId`
+output=${output/#*InstanceId\": /}
+output=${output/%\",*/}
+
+if [ "$output" = "\"" ]
+then
+	now=$(date +"%Y-%m-%d %T")
+	echo "$now - Snagging EIP"
+	myID=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
+	`/usr/local/bin/aws ec2 associate-address --instance-id $myID --public-ip 127.0.0.1`
+fi

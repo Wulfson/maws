@@ -1,0 +1,32 @@
+#!/bin/bash -ex
+dpkg-reconfigure -f noninteractive tzdata
+apt-get install -q -y openjdk-7-jre ntp nginx
+
+cat <<EOF >/etc/rc.local
+cd /home/minecraft
+su minecraft -c "screen -S minecraft -d -m /usr/bin/java -Xms768M -Xmx1G -jar minecraft_server.jar nogui >> server.log"
+EOF
+chmod +x /etc/rc.local
+sh /etc/rc.local
+
+echo "deb http://overviewer.org/debian ./" >> /etc/apt/sources.list
+apt-get update
+apt-get install minecraft-overviewer -y --force-yes
+
+wget -N http://s3.amazonaws.com/MinecraftDownload/minecraft.jar -P /home/minecraft/.minecraft/bin/
+
+mkdir /mnt/overviewer
+cp /home/minecraft/overviewer/config.py /mnt/overviewer/config.py
+chown minecraft:minecraft /mnt/overviewer -R
+
+su minecraft -c "screen -S overviewer -d -m overviewer.py --config=/mnt/overviewer/config.py"
+
+cp /home/minecraft/overviewer/map_update /mnt/overviewer/map_update
+chown minecraft:minecraft /mnt/overviewer/map_update
+cp /home/minecraft/overviewer/crontab /etc/cron.d/minecraft
+
+cp /home/minecraft/overviewer/site-profile /etc/nginx/sites-available/minecraft
+
+rm /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/minecraft /etc/nginx/sites-enabled/minecraft
+service nginx start
