@@ -3,7 +3,7 @@
 import json
 from subprocess import check_output
 
-results = check_output('aws ec2 describe-images --filters "{\\"name\\":\\"name\\",\\"values\\":[\\"ubuntu/images/ubuntu-precise-12.04-amd64-server-*\\"]}"', shell=True)
+results = check_output('aws ec2 describe-images --filters "{\\"name\\":\\"name\\",\\"values\\":[\\"ubuntu/images/ubuntu-trusty-14.04-amd64-server-*\\"]}"', shell=True)
 amis = json.loads(results.lower())
 
 # Arbitrary starting point
@@ -16,7 +16,8 @@ except Exception as ex:
     amis = amis["images"]
 
 for ami in amis:
-    date = ami["name"][48:]
+    last_dash = ami["name"].rfind("-") + 1
+    date = ami["name"][last_dash:]
     if date > most_recent:
         most_recent = date
         ami_id = ami["imageid"]
