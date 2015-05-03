@@ -14,7 +14,7 @@ echo "export AWS_CONFIG_FILE=/etc/aws/aws.conf
 " > /root/.bash_aliases
 source /root/.bash_aliases
 aws ec2 attach-volume --volume-id vol-id12345 --device /dev/sdf --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id`
-aws ec2 associate-address --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id` --public-ip 127.0.0.1
+aws ec2 associate-address --instance-id `curl -s http://169.254.169.254/latest/meta-data/instance-id` --allocation-id <your_eipalloc_id> --allow-reassociation
 mv /home /old_home
 mkdir /home
 echo "/dev/xvdf /home auto nodev,nosuid 0 0" | sudo tee -a /etc/fstab
